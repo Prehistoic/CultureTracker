@@ -8,7 +8,7 @@ import 'bootstrap'
 import { library } from '@fortawesome/fontawesome-svg-core'
 
 /* import specific icons */
-import { faArrowDownWideShort, faArrowDownShortWide, faBars, faExpand, faFilter, faHouse, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faArrowDownWideShort, faArrowDownShortWide, faBars, faExpand, faFilter, faHouse, faXmark, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
 library.add(faBars)
@@ -18,6 +18,7 @@ library.add(faExpand)
 library.add(faFilter)
 library.add(faArrowDownShortWide)
 library.add(faArrowDownWideShort)
+library.add(faPlus)
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 

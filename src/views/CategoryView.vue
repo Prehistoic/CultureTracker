@@ -1,21 +1,14 @@
-<template>
-  <div class="wrapper">
-    <CategorySidebar @reverse-sort-order-event="reverseSortingOrder" />
-
-    <div id="content">
-      This is {{ this.$route.params.name }} View !
-      Current sorting order is {{ sortingOrder }}
-    </div>
-  </div>
-</template>
-
 <script>
 import CategorySidebar from '@/components/CategorySidebar.vue';
+import CategoryTopBar from '@/components/CategoryTopBar.vue';
+import CategoryScrollableContent from '@/components/CategoryScrollableContent.vue';
 
 export default {
   name: 'CategoryView',
   components: {
-    CategorySidebar
+    CategorySidebar,
+    CategoryTopBar,
+    CategoryScrollableContent
   },
   data() {
     return {
@@ -31,9 +24,26 @@ export default {
 }
 </script>
 
+<template>
+  <div class="wrapper">
+    <CategorySidebar @reverse-sort-order-event="reverseSortingOrder" />
+
+    <div id="content">
+      <CategoryTopBar :category="this.$route.params.type" />
+      <CategoryScrollableContent />
+    </div>
+  </div>
+</template>
+
 <style>
 .wrapper {
-    display: flex;
-    width: 100%;
+  display: flex;
+  width: 100%;
+}
+
+#content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 </style>

@@ -24,7 +24,7 @@
             <li>
                 <div class="sidebar-link" id="sortMenu" @click="collapseDropdown('sortSubmenu')">
                     <fa-icon icon="filter"/>
-                    <div class="sidebar-link-text hidden">Sorting on...</div>
+                    <div class="sidebar-link-text hidden">Sort by</div>
                 </div>
                 <div class="sidebar-link-submenu hidden" id="sortSubmenu">
                     <ul class="list-unstyled">
@@ -38,7 +38,7 @@
                 <div class="sidebar-link" id="sortingOrderMenu" @click="reverseSortingOrder()">
                     <fa-icon id="decreasing-sorting-order-icon" class="hidden" icon="arrow-down-wide-short"/>
                     <fa-icon id="increasing-sorting-order-icon" icon="arrow-down-short-wide"/>
-                    <div class="sidebar-link-text hidden">Reverse sorting</div>
+                    <div class="sidebar-link-text hidden">Sort direction</div>
                 </div>
             </li>
         </ul>
@@ -83,7 +83,7 @@ export default {
 
 <style>
 #sidebar {
-    width: 250px;
+    width: 280px;
     height: 100vh;
     background: #7386D5;
     color: #fff;
@@ -101,10 +101,6 @@ export default {
     background: #5365b4;
     display: flex;
     justify-content: flex-end;
-}
-
-#sidebar .components {
-    padding: 20px 0;
 }
 
 #sidebar .sidebar-link {
@@ -127,6 +123,7 @@ export default {
 #sidebar .sidebar-link svg {
     font-size: 1.5em;
     padding: 10px;
+    width: 30px;
 }
 
 #sidebar .sidebar-link-text {

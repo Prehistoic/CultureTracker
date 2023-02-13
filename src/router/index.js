@@ -7,10 +7,15 @@ const routes = [
     component: () => import('../views/HomeView.vue')
   },
   {
-    path: '/category/:name',
+    path: '/category/:type',
     name: 'Category',
     component: () => import('../views/CategoryView.vue')
   },
+  {
+    path: '/category/:type/asset/:id',
+    name: 'Details',
+    component: () => import('../views/AssetDetailsView.vue')
+  }
 ]
 
 const router = createRouter({
