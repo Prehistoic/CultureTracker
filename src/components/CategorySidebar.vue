@@ -36,8 +36,8 @@
             </li>
             <li>
                 <div class="sidebar-link" id="sortingOrderMenu" @click="reverseSortingOrder()">
-                    <fa-icon id="decreasing-sorting-order-icon" class="hidden" icon="arrow-up-wide-short"/>
-                    <fa-icon id="increasing-sorting-order-icon" icon="arrow-down-wide-short"/>
+                    <fa-icon id="decreasing-sorting-order-icon" class="hidden" icon="arrow-down-wide-short"/>
+                    <fa-icon id="increasing-sorting-order-icon" icon="arrow-down-short-wide"/>
                     <div class="sidebar-link-text hidden">Reverse sorting</div>
                 </div>
             </li>
