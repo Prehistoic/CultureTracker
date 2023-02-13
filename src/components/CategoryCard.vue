@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     goToCategory(category) {
-        this.$router.push({ name: 'Category', params: { name: category.toLowerCase() }})
+        this.$router.push({ name: 'Category', params: { name: category }})
     }
   }
 };
