@@ -41,6 +41,12 @@
                     <div class="sidebar-link-text hidden">Sort direction</div>
                 </div>
             </li>
+            <li>
+                <div class="sidebar-link" id="settingsMenu" @click="goToSettings()">
+                    <fa-icon icon="gear"/>
+                    <div class="sidebar-link-text hidden">Settings</div>
+                </div>
+            </li>
         </ul>
     </nav>
 </template>
@@ -50,7 +56,10 @@ export default {
   name: "CategorySidebar",
   methods: {
     goToHome() {
-        this.$router.push({ name: 'Home'})
+        this.$router.push({ name: 'Home' })
+    },
+    goToSettings() {
+        this.$router.push({ name: 'Settings' })
     },
     collapseSidebar() {
         document.getElementById("sidebar").classList.toggle("closed")
