@@ -12,7 +12,8 @@ export default {
   },
   data() {
     return {
-      sortingOrder: "inc"
+      sortingOrder: "inc",
+      itemCardSize: 200
     }
   },
   methods: {
@@ -30,7 +31,7 @@ export default {
 
     <div id="content">
       <CategoryTopBar :category="this.$route.params.type" />
-      <CategoryScrollableContent />
+      <CategoryScrollableContent :category="this.$route.params.type" :cardSize="itemCardSize"/>
     </div>
   </div>
 </template>

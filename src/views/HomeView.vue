@@ -8,9 +8,9 @@ export default {
   },
   data() {
     return {
-      categories: [["books", "mangas", "comics", "music"], ["movies", "animes", "series", "games"]]
+      categories: [["books", "mangas", "comics", "music"], ["movies", "animes", "series", "games"]],
     }
-  }
+  },
 }
 </script>
 
