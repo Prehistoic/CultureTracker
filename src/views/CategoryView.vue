@@ -13,13 +13,16 @@ export default {
   data() {
     return {
       sortingOrder: "inc",
-      itemCardSize: 200
+      itemCardSize: 250
     }
   },
   methods: {
     reverseSortingOrder() {
       if (this.sortingOrder == "inc") this.sortingOrder = "dec"
       else this.sortingOrder = "inc"
+    },
+    updateCardSize() {
+      this.itemCardSize = Number(document.getElementById("range-input").value);
     }
   }
 }
@@ -27,11 +30,11 @@ export default {
 
 <template>
   <div class="wrapper">
-    <CategorySidebar @reverse-sort-order-event="reverseSortingOrder" />
+    <CategorySidebar @reverse-sort-order-event="reverseSortingOrder" @card-size-update-event="updateCardSize"/>
 
     <div id="content">
       <CategoryTopBar :category="this.$route.params.type" />
-      <CategoryScrollableContent :category="this.$route.params.type" :cardSize="itemCardSize"/>
+      <CategoryScrollableContent :category="this.$route.params.type" :cardSize="itemCardSize" :sortingOrder="this.sortingOrder" />
     </div>
   </div>
 </template>

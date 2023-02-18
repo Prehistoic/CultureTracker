@@ -18,7 +18,8 @@
                     <div class="sidebar-link-text hidden">Display</div>
                 </div>
                 <div class="sidebar-link-submenu hidden" id="displaySubmenu">
-                    Change size of cards with a cool zipper here
+                    <input type="range" id="range-input" class="form-range range-input" min="150" max="350" defaultValue="250" step="10" @input="updateCardSize($event.target.value)">
+                    <output class="range-counter" id="range-counter">250</output>
                 </div>  
             </li>
             <li>
@@ -68,10 +69,16 @@ export default {
         Array.from(document.getElementsByClassName("sidebar-link-text")).forEach(element => {
             element.classList.toggle("hidden")
         });
+
+        if(document.getElementById("sidebar").classList.contains("closed")) {
+            Array.from(document.getElementsByClassName("sidebar-link-submenu")).forEach(element => {
+                element.classList.add("hidden")
+            })
+        }
     },
     makeActive(menu) {
-        Array.from(document.getElementsByClassName("active")).forEach(element => {
-            element.classList.remove("active")
+        Array.from(document.getElementsByClassName("sidebar-link")).forEach(element => {
+            if (element.classList.contains("active")) element.classList.remove("active")
         })
         document.getElementById(menu).classList.add("active")
     },
@@ -85,6 +92,10 @@ export default {
         this.makeActive("sortingOrderMenu")
         document.getElementById("decreasing-sorting-order-icon").classList.toggle("hidden")
         document.getElementById("increasing-sorting-order-icon").classList.toggle("hidden")
+    },
+    updateCardSize(input) {
+        document.getElementById("range-counter").innerHTML = input;
+        this.$emit('card-size-update-event');
     }
   }
 };
@@ -164,5 +175,16 @@ export default {
 
 .hidden {
     display: none
+}
+
+.range-input {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.range-counter {
+    margin-bottom: 10px;
 }
 </style>

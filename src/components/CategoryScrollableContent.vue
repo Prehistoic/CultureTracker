@@ -12,21 +12,61 @@ export default {
         cardSize: {
             type: Number,
             required: true,
+        },
+        sortingOrder: {
+            type: String,
+            required: true,
+        }
+    },
+    watch: {
+        sortingOrder: function() {
+            var currentPage = this.getSortedYears(this.getSortingOrder())[0];
+            document.getElementById('carousel-indicator').innerHTML = currentPage;
+
+            var carouselItems = document.getElementsByClassName('carousel-item');
+            Array.from(carouselItems).forEach(item => {
+                item.classList.remove('active');
+            })
+            carouselItems[0].classList.add('active');
         }
     },
     components: {
         CategoryItemCard
     },
     methods: {
-        getYears(assets) {
+        getAssets() {
+            var assets = []
+
+            var book = new Book("Harry Potter", "Rowling", "08/01/2022", 1000, 1, ["Fantasy"], "https://britishheritage.com/uploads/article/2004/11/1025/Harry_potter_chamber-of-secrets-theatrical-poster.jpg?t=1604661088", "14/02/2023", "16/02/2023", true, "Harry Potter est un sorcier", 5, "Vraiment sympa")
+            assets.push(book);
+
+            book = new Book("Winnie", "the Pooh", "12/08/1997", 50, 2, ["Kids"], "http://www.cenest.net/wp-content/uploads/2014/11/Winnie-lOurson-3Wallpapers-iPad-Retina.jpg", "12/02/2023", "13/02/2023", true, "Super", 5, "Super bien")
+            for (let i=0; i < 50; i++) {
+                assets.push(book)
+            }
+
+            return assets;
+        },
+        getSortedYears(sortingOrder) {
+            const assets = this.getAssets();
+
             var years = [];
             assets.forEach(asset => {
                 var year = asset.getReleaseDate().split('/')[2];
                 years.push(year);
             });
-            return [...new Set(years)].sort(function(a, b) { return a - b; });
+
+            return [...new Set(years)].sort(function(a, b) { 
+                if (sortingOrder == "inc") {
+                    return a - b;
+                } else {
+                    return b - a;
+                } 
+            });
         },
-        getAssetsFromYear(assets, year) {
+        getAssetsFromYear(year) {
+            const assets = this.getAssets();
+
             var result = [];
             assets.forEach(asset => {
                 if (year == asset.getReleaseDate().split('/')[2]) {
@@ -34,28 +74,26 @@ export default {
                 }
             });
             return result;
-        }
+        },
+        getSortingOrder() {
+            return this.sortingOrder;
+        },
     },
-    setup() {
-        var assets = []
+    mounted() {
+        var currentPage = this.getSortedYears(this.getSortingOrder())[0];
+        document.getElementById('carousel-indicator').innerHTML = currentPage;
 
-        var book = new Book("Harry Potter", "Rowling", "08/01/2022", 1000, 1, ["Fantasy"], "https://britishheritage.com/uploads/article/2004/11/1025/Harry_potter_chamber-of-secrets-theatrical-poster.jpg?t=1604661088", "14/02/2023", "16/02/2023", true, "Harry Potter est un sorcier", 5, "Vraiment sympa")
-        assets.push(book);
-
-        book = new Book("Winnie", "the Pooh", "12/08/1997", 50, 2, ["Kids"], "http://www.cenest.net/wp-content/uploads/2014/11/Winnie-lOurson-3Wallpapers-iPad-Retina.jpg", "12/02/2023", "13/02/2023", true, "Super", 5, "Super bien")
-        for (let i=0; i < 50; i++) {
-            assets.push(book)
-        }
-
-        return {
-            assets
-        }
+        const myCarousel = document.getElementById('carouselItemsCard')
+        myCarousel.addEventListener('slide.bs.carousel', event => {
+            var currentPage = this.getSortedYears(this.getSortingOrder())[event.to];
+            document.getElementById('carousel-indicator').innerHTML = currentPage;
+        });
     }
 }
 </script>
 
 <template>
-    <div class="empty-message" v-if="assets.length === 0">
+    <div class="empty-message" v-if="getAssets().length === 0">
         No {{ category.toLowerCase() }} found, try adding one !
     </div>
 
@@ -67,9 +105,9 @@ export default {
 
             <div id="carouselItemsCard" class="carousel slide">
                 <div class="carousel-inner">
-                    <div v-for="(year, i) in getYears(assets)" :key="i" :class= '{"carousel-item": true, "active": i == 0}'>
+                    <div v-for="(year, i) in getSortedYears(sortingOrder)" :key="i" :class= '{"carousel-item": true, "active": i == 0}'>
                         <div class="scrollable-panel">
-                            <CategoryItemCard :item="asset" :cardSize="cardSize" v-for="(asset, j) in getAssetsFromYear(assets, year)" :key="j"/>
+                            <CategoryItemCard :item="asset" :cardSize="cardSize" v-for="(asset, j) in getAssetsFromYear(year)" :key="j"/>
                         </div>
                     </div>
                 </div>
@@ -79,6 +117,8 @@ export default {
                 <fa-icon icon="chevron-right" />
             </button>
         </div>
+
+        <div id="carousel-indicator" class="carousel-indicator"></div>
     </div>
 </template>
 
@@ -113,6 +153,7 @@ export default {
     height: 750px;
     overflow-y: scroll;
     display: flex;
+    justify-content: space-between;
     flex-wrap: wrap;
 }
 
@@ -121,6 +162,7 @@ export default {
 }
 
 .carousel-indicator {
-    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 </style>
