@@ -1,16 +1,18 @@
 <script>
 import HomeCard from '../components/HomeCard.vue'
+import HomeWishlistButton from '../components/HomeWishlistButton.vue'
 
 export default {
   name: 'HomeView',
   components: {
-    HomeCard
+    HomeCard,
+    HomeWishlistButton
   },
   data() {
     return {
       categories: [["books", "mangas", "comics", "music"], ["movies", "animes", "series", "games"]],
     }
-  },
+  }
 }
 </script>
 
@@ -28,6 +30,8 @@ export default {
         </div>
       </div>
     </div>
+
+    <HomeWishlistButton />
   </div>
 </template>
 

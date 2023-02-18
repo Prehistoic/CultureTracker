@@ -153,7 +153,6 @@ export default {
     height: 750px;
     overflow-y: scroll;
     display: flex;
-    justify-content: space-between;
     flex-wrap: wrap;
 }
 

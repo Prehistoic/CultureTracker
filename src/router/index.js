@@ -20,6 +20,11 @@ const routes = [
     path: '/category/:type/asset/:id',
     name: 'Details',
     component: () => import('../views/AssetDetailsView.vue')
+  },
+  {
+    path: '/wishlist',
+    name: 'Wishlist',
+    component: () => import('../views/WishlistView.vue')
   }
 ]
 
