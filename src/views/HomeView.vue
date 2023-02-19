@@ -12,7 +12,7 @@ export default {
     return {
       categories: [["books", "mangas", "comics", "music"], ["movies", "animes", "series", "games"]],
     }
-  }
+  },
 }
 </script>
 
