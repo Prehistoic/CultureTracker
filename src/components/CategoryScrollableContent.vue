@@ -1,6 +1,6 @@
 <script>
 import CategoryItemCard from './CategoryItemCard.vue';
-import Book from '../models/books'
+//import Book from '../models/books'
 
 export default {
     name: "CategoryScrollableContent",
@@ -20,35 +20,48 @@ export default {
     },
     watch: {
         sortingOrder: function() {
-            var currentPage = this.getSortedYears(this.getSortingOrder())[0];
-            document.getElementById('carousel-indicator').innerHTML = currentPage;
+            if (this.getAssets(this.category).length != 0) {
+                var currentPage = this.getSortedYears(this.category, this.getSortingOrder())[0];
+                document.getElementById('carousel-indicator').innerHTML = currentPage;
 
-            var carouselItems = document.getElementsByClassName('carousel-item');
-            Array.from(carouselItems).forEach(item => {
-                item.classList.remove('active');
-            })
-            carouselItems[0].classList.add('active');
+                var carouselItems = document.getElementsByClassName('carousel-item');
+                Array.from(carouselItems).forEach(item => {
+                    item.classList.remove('active');
+                })
+                carouselItems[0].classList.add('active');
+            }
         }
     },
     components: {
         CategoryItemCard
     },
     methods: {
-        getAssets() {
-            var assets = []
+        initAssets(category) {
+            const fs = window.require('fs');
+            const default_assets = {"assets": []}
+            fs.writeFileSync("src/data/" + category.toLowerCase() + ".json", JSON.stringify(default_assets));
+        },
+        getAssets(category) {
+            const fs = window.require('fs');
 
-            var book = new Book("Harry Potter", "Rowling", "08/01/2022", 1000, 1, ["Fantasy"], "https://britishheritage.com/uploads/article/2004/11/1025/Harry_potter_chamber-of-secrets-theatrical-poster.jpg?t=1604661088", "14/02/2023", "16/02/2023", true, "Harry Potter est un sorcier", 5, "Vraiment sympa")
+            if (!fs.existsSync("src/data/" + category.toLowerCase() + ".json")) {
+                this.initAssets(category);
+            }
+
+            var assets = JSON.parse(fs.readFileSync("src/data/" + category.toLowerCase() + ".json")).assets;
+
+            /*var book = new Book("Harry Potter", "Rowling", "08/01/2022", 1000, 1, ["Fantasy"], "https://britishheritage.com/uploads/article/2004/11/1025/Harry_potter_chamber-of-secrets-theatrical-poster.jpg?t=1604661088", "14/02/2023", "16/02/2023", true, "Harry Potter est un sorcier", 5, "Vraiment sympa")
             assets.push(book);
 
             book = new Book("Winnie", "the Pooh", "12/08/1997", 50, 2, ["Kids"], "http://www.cenest.net/wp-content/uploads/2014/11/Winnie-lOurson-3Wallpapers-iPad-Retina.jpg", "12/02/2023", "13/02/2023", true, "Super", 5, "Super bien")
             for (let i=0; i < 50; i++) {
                 assets.push(book)
-            }
+            }*/
 
             return assets;
         },
-        getSortedYears(sortingOrder) {
-            const assets = this.getAssets();
+        getSortedYears(category, sortingOrder) {
+            const assets = this.getAssets(category);
 
             var years = [];
             assets.forEach(asset => {
@@ -64,8 +77,8 @@ export default {
                 } 
             });
         },
-        getAssetsFromYear(year) {
-            const assets = this.getAssets();
+        getAssetsFromYear(category, year) {
+            const assets = this.getAssets(category);
 
             var result = [];
             assets.forEach(asset => {
@@ -80,20 +93,22 @@ export default {
         },
     },
     mounted() {
-        var currentPage = this.getSortedYears(this.getSortingOrder())[0];
-        document.getElementById('carousel-indicator').innerHTML = currentPage;
-
-        const myCarousel = document.getElementById('carouselItemsCard')
-        myCarousel.addEventListener('slide.bs.carousel', event => {
-            var currentPage = this.getSortedYears(this.getSortingOrder())[event.to];
+        if (this.getAssets(this.category).length != 0) {
+            var currentPage = this.getSortedYears(this.category, this.getSortingOrder())[0];
             document.getElementById('carousel-indicator').innerHTML = currentPage;
-        });
+
+            const myCarousel = document.getElementById('carouselItemsCard')
+            myCarousel.addEventListener('slide.bs.carousel', event => {
+                var currentPage = this.getSortedYears(this.category, this.getSortingOrder())[event.to];
+                document.getElementById('carousel-indicator').innerHTML = currentPage;
+            });   
+        }
     }
 }
 </script>
 
 <template>
-    <div class="empty-message" v-if="getAssets().length === 0">
+    <div class="empty-message" v-if="getAssets(category).length === 0">
         No {{ category.toLowerCase() }} found, try adding one !
     </div>
 
@@ -105,9 +120,9 @@ export default {
 
             <div id="carouselItemsCard" class="carousel slide">
                 <div class="carousel-inner">
-                    <div v-for="(year, i) in getSortedYears(sortingOrder)" :key="i" :class= '{"carousel-item": true, "active": i == 0}'>
+                    <div v-for="(year, i) in getSortedYears(category, sortingOrder)" :key="i" :class= '{"carousel-item": true, "active": i == 0}'>
                         <div class="scrollable-panel">
-                            <CategoryItemCard :item="asset" :cardSize="cardSize" v-for="(asset, j) in getAssetsFromYear(year)" :key="j"/>
+                            <CategoryItemCard :item="asset" :cardSize="cardSize" v-for="(asset, j) in getAssetsFromYear(category, year)" :key="j"/>
                         </div>
                     </div>
                 </div>

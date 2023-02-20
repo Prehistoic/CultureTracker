@@ -29,7 +29,7 @@ library.add(faFloppyDisk)
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-createApp(App)
-    .component("fa-icon", FontAwesomeIcon)
-    .use(router)
-    .mount('#app')
+const app = createApp(App)
+app.component("fa-icon", FontAwesomeIcon)
+app.use(router)
+app.mount('#app')

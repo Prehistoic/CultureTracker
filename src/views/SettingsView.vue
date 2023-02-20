@@ -20,10 +20,47 @@ export default {
       return this.saveButtonStatus == "off";
     },
     downloadDatabase() {
+      const fs = window.require('fs');
+      const path = window.require('path');
 
+      const data_folder = "src/data"
+      const list = fs.readdirSync(data_folder);
+      
+      const JSZip = window.require('jszip');
+      const zip = new JSZip()
+      for (let filename of list) {
+        const file = path.resolve(data_folder, filename);
+        const filedata = fs.readFileSync(file);
+        zip.file(filename, filedata);
+      }
+
+      zip.generateAsync({type:"blob"}).then(
+        function(output) {
+          const element = document.createElement("a");
+          element.href = URL.createObjectURL(output);
+          element.download = "CultureTrackerBackup.zip";
+          element.click();
+          element.remove();
+        }
+      )
     },
-    uploadFileToDatabase() {
+    clickUploadInput() {
+      this.$refs.fileUpload.click();
+    },
+    uploadZipToDatabase(event) {
+      const zipfile = event.target.files[0];
 
+      const fs = window.require('fs');
+      const JSZip = window.require('jszip');
+      JSZip.loadAsync(zipfile).then(
+        function(zip) {
+          Object.keys(zip.files).forEach(function(filename) {
+            zip.files[filename].async('string').then(function(filedata) {
+              fs.writeFileSync("src/data/" + filename, filedata);
+            })
+          });
+        }
+      )
     },
     initApiSettings() {
       const fs = window.require('fs');
@@ -37,16 +74,16 @@ export default {
           {"name":"lastfm","value":""}
         ]
       };
-      fs.writeFileSync("src/assets/settings.json", JSON.stringify(default_settings));
+      fs.writeFileSync("src/data/settings.json", JSON.stringify(default_settings));
     },
     readApiSettings() {
       const fs = window.require('fs');
 
-      if (!fs.existsSync("src/assets/settings.json")) {
+      if (!fs.existsSync("src/data/settings.json")) {
         this.initApiSettings();
       }
 
-      const data = fs.readFileSync("src/assets/settings.json");
+      const data = fs.readFileSync("src/data/settings.json");
       return JSON.parse(data);
     },
     loadApiSettings() {
@@ -63,7 +100,7 @@ export default {
 
       const fs = window.require('fs');
       try { 
-        fs.writeFileSync("src/assets/settings.json", JSON.stringify(settings), 'utf-8');
+        fs.writeFileSync("src/data/settings.json", JSON.stringify(settings), 'utf-8');
       } catch(e) { 
         alert('Failed to save settings !'); 
       }
@@ -91,11 +128,12 @@ export default {
 
       <div class="general-database-settings-title">Database</div>
       <div class="general-database-settings-buttons">
-        <button type="button" class="download-button btn btn-primary">
+        <button type="button" class="download-button btn btn-primary" @click="downloadDatabase()">
           <fa-icon icon="download" />
           DOWNLOAD
         </button>
-        <button type="button" class="upload-button btn btn-primary">
+        <input type="file" @change="uploadZipToDatabase" ref="fileUpload" style="display: none" accept=".zip">
+        <button type="button" class="upload-button btn btn-primary" @click="clickUploadInput()">
           <fa-icon icon="upload" />
           UPLOAD
         </button>
