@@ -23,6 +23,7 @@ export default {
         },
         closeModal() {
             this.isModalVisible = false;
+            this.$emit('need-update');
         }
     }
 }
@@ -36,14 +37,14 @@ export default {
             <fa-icon icon="plus" />
         </button>
 
-        <CategoryNewBookModal v-if="category == 'books' && isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'mangas' && isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'webtoons' && isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'comics' && isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'movies' && isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'series' && isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'animes' && isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'games' && isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'books' && isModalVisible" @close-new-asset="closeModal" />
+        <CategoryNewBookModal v-if="category == 'mangas' && isModalVisible" @close-new-asset="closeModal" />
+        <CategoryNewBookModal v-if="category == 'webtoons' && isModalVisible" @close-new-asset="closeModal" />
+        <CategoryNewBookModal v-if="category == 'comics' && isModalVisible" @close-new-asset="closeModal" />
+        <CategoryNewBookModal v-if="category == 'movies' && isModalVisible" @close-new-asset="closeModal" />
+        <CategoryNewBookModal v-if="category == 'series' && isModalVisible" @close-new-asset="closeModal" />
+        <CategoryNewBookModal v-if="category == 'animes' && isModalVisible" @close-new-asset="closeModal" />
+        <CategoryNewBookModal v-if="category == 'games' && isModalVisible" @close-new-asset="closeModal" />
     </div>
 </template>
 

@@ -29,7 +29,7 @@ export default {
     <div class="card mb-4 shadow-lg border border-secondary bg-dark text-light" :style="cssProps">
         <img
             class="card-img-top item-img"
-            :src=item.getCoverUrl()
+            :src="require(`@/data/covers/${this.item.getCoverUrl()}`)"
             alt="item image"
             draggable="false"
         />
@@ -48,7 +48,7 @@ export default {
 
 .card-img-top {
   height: var(--img-height);
-  overflow: hidden;
+  object-fit: cover;
 }
 
 .card-body {

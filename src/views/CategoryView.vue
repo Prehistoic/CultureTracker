@@ -13,7 +13,8 @@ export default {
   data() {
     return {
       sortingOrder: "inc",
-      itemCardSize: 250
+      itemCardSize: 250,
+      shouldReload: false,
     }
   },
   methods: {
@@ -23,6 +24,9 @@ export default {
     },
     updateCardSize() {
       this.itemCardSize = Number(document.getElementById("range-input").value);
+    },
+    updateView() {
+      this.shouldReload = !this.shouldReload;
     }
   }
 }
@@ -33,8 +37,8 @@ export default {
     <CategorySidebar @reverse-sort-order-event="reverseSortingOrder" @card-size-update-event="updateCardSize"/>
 
     <div id="content">
-      <CategoryTopBar :category="this.$route.params.type" />
-      <CategoryScrollableContent :category="this.$route.params.type" :cardSize="itemCardSize" :sortingOrder="this.sortingOrder" />
+      <CategoryTopBar :category="this.$route.params.type" @need-update="updateView"/>
+      <CategoryScrollableContent :category="this.$route.params.type" :cardSize="itemCardSize" :sortingOrder="this.sortingOrder" :shouldReload="this.shouldReload"/>
     </div>
   </div>
 </template>

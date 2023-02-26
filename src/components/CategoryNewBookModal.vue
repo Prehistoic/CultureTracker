@@ -12,7 +12,7 @@ export default {
     },
     methods: {
       close() {
-          this.$emit('close');
+        this.$emit('close-new-asset');
       },
       getRating() {
         let rating = 0
@@ -34,6 +34,8 @@ export default {
         this.temp_cover_filename = "";
       },
       saveBook() {
+        const fs = window.require('fs');
+
         const title = document.getElementById("bookTitle").value;
         const author = document.getElementById("bookAuthor").value;
         const releaseDate = document.getElementById("bookReleaseDate").value;
@@ -50,11 +52,18 @@ export default {
 
         if (title == "" | author == "" | releaseDate == "" | startDate == "" | synopsys == "" | comment == "" | cover_url == "" | (finished && endDate == "")) {
           this.$toast.error("Missing elements !", { position: 'bottom', duration: 1500});
+        } else if (new Date(startDate) > new Date(endDate) | new Date(releaseDate) > new Date(startDate)) {
+          this.$toast.error("Problem in dates !", { position: 'bottom', duration: 1500});
         } else {
+          let newBook = new Book(title, author, releaseDate, pageCount, volumeId, genres, cover_url, startDate, endDate, finished, synopsys, rating, comment);
+          
+          let newBookData = JSON.parse(JSON.stringify(newBook));
+          let booksData = JSON.parse(fs.readFileSync("src/data/books.json"))
+          booksData["assets"].push(newBookData);
+          fs.writeFileSync("src/data/books.json", JSON.stringify(booksData));
+
           this.saveCover();
 
-          let newBook = new Book(title, author, releaseDate, pageCount, volumeId, genres, cover_url, startDate, endDate, finished, synopsys, rating, comment);
-          console.log(newBook);
           this.close();
         }
       },

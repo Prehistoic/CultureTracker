@@ -1,6 +1,6 @@
 <script>
+import Book from '@/models/books';
 import CategoryItemCard from './CategoryItemCard.vue';
-//import Book from '../models/books'
 
 export default {
     name: "CategoryScrollableContent",
@@ -16,6 +16,10 @@ export default {
         sortingOrder: {
             type: String,
             required: true,
+        },
+        shouldReload: {
+            type: Boolean,
+            required: true
         }
     },
     watch: {
@@ -30,6 +34,9 @@ export default {
                 })
                 carouselItems[0].classList.add('active');
             }
+        },
+        shouldReload: function() {
+            this.$forceUpdate();
         }
     },
     components: {
@@ -48,15 +55,12 @@ export default {
                 this.initAssets(category);
             }
 
-            var assets = JSON.parse(fs.readFileSync("src/data/" + category.toLowerCase() + ".json")).assets;
-
-            /*var book = new Book("Harry Potter", "Rowling", "08/01/2022", 1000, 1, ["Fantasy"], "https://britishheritage.com/uploads/article/2004/11/1025/Harry_potter_chamber-of-secrets-theatrical-poster.jpg?t=1604661088", "14/02/2023", "16/02/2023", true, "Harry Potter est un sorcier", 5, "Vraiment sympa")
-            assets.push(book);
-
-            book = new Book("Winnie", "the Pooh", "12/08/1997", 50, 2, ["Kids"], "http://www.cenest.net/wp-content/uploads/2014/11/Winnie-lOurson-3Wallpapers-iPad-Retina.jpg", "12/02/2023", "13/02/2023", true, "Super", 5, "Super bien")
-            for (let i=0; i < 50; i++) {
-                assets.push(book)
-            }*/
+            let assets = [];
+            const jsonAssets = JSON.parse(fs.readFileSync("src/data/" + category.toLowerCase() + ".json")).assets;
+            Array.from(jsonAssets).forEach(item => {
+                const asset = new Book(item.title, item.author, item.release_date, item.page_count, item.volume_id, item.genres, item.cover_url, item.start_date, item.end_date, item.finished, item.synopsys, item.rating, item.comment);
+                assets.push(asset);
+            });
 
             return assets;
         },
@@ -65,7 +69,7 @@ export default {
 
             var years = [];
             assets.forEach(asset => {
-                var year = asset.getReleaseDate().split('/')[2];
+                var year = asset.getReleaseDate().split('-')[0];
                 years.push(year);
             });
 
@@ -82,7 +86,7 @@ export default {
 
             var result = [];
             assets.forEach(asset => {
-                if (year == asset.getReleaseDate().split('/')[2]) {
+                if (year == asset.getReleaseDate().split('-')[0]) {
                     result.push(asset);
                 }
             });
