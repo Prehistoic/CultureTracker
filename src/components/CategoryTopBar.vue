@@ -1,10 +1,10 @@
 <script>
-import CategoryNewItemModal from './CategoryNewItemModal.vue';
+import CategoryNewBookModal from './CategoryNewBookModal.vue';
 
 export default {
     name: "CategoryTopBar",
     components: {
-        CategoryNewItemModal
+        CategoryNewBookModal
     },
     props: {
         category: {
@@ -31,12 +31,19 @@ export default {
 <template>
     <div id="topbar">
         <div class="topbar-title"> {{ category.toUpperCase() }}</div>
-        <button class="btn btn-success" @click="showModal">
+        <button class="btn btn-success new-asset-btn" @click="showModal">
             ADD
             <fa-icon icon="plus" />
         </button>
 
-        <CategoryNewItemModal v-show="isModalVisible" @close="closeModal"/>
+        <CategoryNewBookModal v-if="category == 'books'" v-show="isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'mangas'" v-show="isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'webtoons'" v-show="isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'comics'" v-show="isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'movies'" v-show="isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'series'" v-show="isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'animes'" v-show="isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'games'" v-show="isModalVisible" @close="closeModal" />
     </div>
 </template>
 
@@ -52,7 +59,7 @@ export default {
     margin-left: 30px;
 }
 
-#topbar .btn {
+#topbar .new-asset-btn {
     width: 100px;
     margin-right: 30px;
 }

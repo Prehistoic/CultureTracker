@@ -10,7 +10,7 @@ export default {
   },
   data() {
     return {
-      categories: [["books", "mangas", "comics", "music"], ["movies", "animes", "series", "games"]],
+      categories: [["books", "mangas", "webtoons", "comics"], ["movies", "animes", "series", "games"]],
     }
   },
 }

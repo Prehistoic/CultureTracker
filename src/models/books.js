@@ -1,20 +1,20 @@
 export default class Book {
 
-    title = "";
-    author = "";
-    release_date = "";
-    page_count = 0;
-    volume_id = 0;
-    genres = [];
-    cover_url = "";
-    start_date = "";
-    end_date = "";
-    finished = false;
-    synopsys = "";
-    stars = 5;
-    comment = "";
+    title;
+    author;
+    release_date;
+    page_count;
+    volume_id;
+    genres;
+    cover_url;
+    start_date;
+    end_date;
+    finished;
+    synopsys;
+    stars;
+    comment;
 
-    constructor(_title, _author, _release_date, _page_count, _volume_id, _genres, _cover_url, _start_date, _end_date, _finished, _synopsys, _stars, _comment) {
+    constructor(_title="", _author="", _release_date="", _page_count=0, _volume_id=0, _genres=[], _cover_url="", _start_date="", _end_date="", _finished=false, _synopsys="", _stars=5, _comment="") {
         this.title = _title;
         this.author = _author;
         this.release_date = _release_date;
