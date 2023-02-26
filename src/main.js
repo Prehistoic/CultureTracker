@@ -28,8 +28,10 @@ library.add(faUpload)
 library.add(faFloppyDisk)
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { Toaster } from '@meforma/vue-toaster';
 
 const app = createApp(App)
 app.component("fa-icon", FontAwesomeIcon)
+app.use(Toaster)
 app.use(router)
 app.mount('#app')

@@ -49,7 +49,7 @@ export default {
         const rating = this.getRating();
 
         if (title == "" | author == "" | releaseDate == "" | startDate == "" | synopsys == "" | comment == "" | cover_url == "" | (finished && endDate == "")) {
-          // display error Toast
+          this.$toast.error("Missing elements !", { position: 'bottom', duration: 1500});
         } else {
           this.saveCover();
 
