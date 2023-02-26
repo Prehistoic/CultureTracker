@@ -13,6 +13,27 @@ export default {
       categories: [["books", "mangas", "webtoons", "comics"], ["movies", "animes", "series", "games"]],
     }
   },
+  methods: {
+    clearDirectory(directory) {
+      const fs = window.require("fs");
+      const path = window.require("path");
+
+      fs.readdir(directory, (err, files) => {
+        if (err) throw err;
+
+        for (const file of files) {
+          if ([".png", ".jpg", ".jpeg"].includes(path.extname(file))) {
+            fs.unlink(path.join(directory, file), (err) => {
+              if (err) throw err;
+            });
+          }
+        }
+      });
+    }
+  },
+  mounted() {
+    this.clearDirectory("src/data/temp");
+  }
 }
 </script>
 

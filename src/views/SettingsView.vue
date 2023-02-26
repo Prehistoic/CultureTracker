@@ -29,9 +29,19 @@ export default {
       const JSZip = window.require('jszip');
       const zip = new JSZip()
       for (let filename of list) {
-        const file = path.resolve(data_folder, filename);
-        const filedata = fs.readFileSync(file);
-        zip.file(filename, filedata);
+        if (fs.lstatSync(data_folder + "/" + filename).isFile()) {
+          const file = path.resolve(data_folder, filename);
+          const filedata = fs.readFileSync(file);
+          zip.file(filename, filedata);
+        } else {
+          const new_folder = zip.folder(filename);
+          const folder_list = fs.readdirSync(data_folder + "/" + filename);
+          for (let folder_filename of folder_list) {
+            const folder_file = path.resolve(data_folder + "/" + filename, folder_filename);
+            const folder_filedata = fs.readFileSync(folder_file);
+            new_folder.file(folder_filename, folder_filedata);
+          }
+        }
       }
 
       zip.generateAsync({type:"blob"}).then(
@@ -47,20 +57,73 @@ export default {
     clickUploadInput() {
       this.$refs.fileUpload.click();
     },
+    restoreFolderFromZip(sourceFolder, targetFolder, zip) {
+      const Fs = window.require('fs');
+      const Path = window.require('path');
+      const Promise = window.require('bluebird');
+
+      return new Promise((resolve) => {
+        sourceFolder = sourceFolder.replace(/\/$/, '') + '/';
+
+        if(!zip.files[sourceFolder]) {
+          return resolve(zip);
+        }
+
+        let queue = [];
+        let files = Object.keys(zip.files);
+
+        if (files && files.length) {
+          files.forEach((file) => {
+            if(zip.files[file].dir || file.indexOf(sourceFolder) !== 0) return;
+
+            let pathname = Path.join(targetFolder, Path.relative(sourceFolder, file));
+
+            queue.push(
+              zip.files[file].async('nodebuffer').then((buffer) => {
+                Fs.writeFileSync(pathname, buffer);
+              })
+            );
+          });
+
+          return Promise.all(queue).then(() => resolve(zip));
+        } else {
+          resolve(zip);
+        }
+      });
+    },
+    restoreDataFromZip(model, zip) {
+      const Fs = window.require('fs');
+      const Promise = window.require('bluebird');
+
+      return new Promise((resolve) => {
+        let filename = 'src/data/' + model;
+
+        if(!zip.files[model]) {
+          return resolve(zip);
+        }
+
+        zip.files[model].async('string').then((data) => {
+          Fs.writeFileSync(filename, data);
+        })
+
+        return resolve(zip);
+      });
+    },
     uploadZipToDatabase(event) {
       const zipfile = event.target.files[0];
 
-      const fs = window.require('fs');
       const JSZip = window.require('jszip');
-      JSZip.loadAsync(zipfile).then(
-        function(zip) {
-          Object.keys(zip.files).forEach(function(filename) {
-            zip.files[filename].async('string').then(function(filedata) {
-              fs.writeFileSync("src/data/" + filename, filedata);
-            })
-          });
-        }
-      )
+      JSZip.loadAsync(zipfile)
+        .then((zip) => this.restoreFolderFromZip('covers', 'src/data/temp', zip))
+        .then((zip) => this.restoreDataFromZip('animes.json', zip))
+        .then((zip) => this.restoreDataFromZip('books.json', zip))
+        .then((zip) => this.restoreDataFromZip('comics.json', zip))
+        .then((zip) => this.restoreDataFromZip('games.json', zip))
+        .then((zip) => this.restoreDataFromZip('mangas.json', zip))
+        .then((zip) => this.restoreDataFromZip('movies.json', zip))
+        .then((zip) => this.restoreDataFromZip('series.json', zip))
+        .then((zip) => this.restoreDataFromZip('settings.json', zip))
+        .then((zip) => this.restoreDataFromZip('webtoons.json', zip))
     },
     initApiSettings() {
       const fs = window.require('fs');

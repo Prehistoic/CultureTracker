@@ -7,15 +7,70 @@ export default {
       return {
         fillMode: "AUTO",
         genres: [],
-        newAsset: new Book()
+        temp_cover_filename: ""
       }
     },
     methods: {
       close() {
           this.$emit('close');
       },
-      saveBook() {
+      getRating() {
+        let rating = 0
+        const ratingSpans = document.getElementsByClassName("rating-span");
+        Array.from(ratingSpans).forEach(span => {
+          if (span.classList.contains("active")) {
+            rating = rating + 1;
+          }
+        });
+        return rating;
+      },
+      saveCover() {
+        const fs = window.require('fs');
+        
+        const old_cover_path = "src/data/temp/" + this.temp_cover_filename;
+        const new_cover_path = "src/data/covers/" + this.temp_cover_filename;
+        fs.rename(old_cover_path, new_cover_path, (error) => { if (error) throw error; })
 
+        this.temp_cover_filename = "";
+      },
+      saveBook() {
+        const title = document.getElementById("bookTitle").value;
+        const author = document.getElementById("bookAuthor").value;
+        const releaseDate = document.getElementById("bookReleaseDate").value;
+        const volumeId = document.getElementById("bookVolumeId").value;
+        const pageCount = document.getElementById("bookPageCount").value;
+        const genres = this.genres.target;
+        const cover_url = this.temp_cover_filename;
+        const startDate = document.getElementById("bookStartDate").value;
+        const endDate = document.getElementById("bookEndDate").value;
+        const finished = document.getElementById("bookFinished").checked;
+        const synopsys = document.getElementById("bookSynopsys").value;
+        const comment = document.getElementById("bookComment").value;
+        const rating = this.getRating();
+
+        if (title == "" | author == "" | releaseDate == "" | startDate == "" | synopsys == "" | comment == "" | cover_url == "" | (finished && endDate == "")) {
+          // display error Toast
+        } else {
+          this.saveCover();
+
+          let newBook = new Book(title, author, releaseDate, pageCount, volumeId, genres, cover_url, startDate, endDate, finished, synopsys, rating, comment);
+          console.log(newBook);
+          this.close();
+        }
+      },
+      clickUploadCoverInput() {
+        this.$refs.coverUpload.click();
+      },
+      uploadCover(event) {
+        const fs = window.require('fs');
+        const path = window.require('path');
+        const crypto = window.require('crypto');
+
+        const cover_img_input_file = event.target.files[0].path;
+        const cover_img_output_file = "src/data/temp/" + crypto.randomBytes(20).toString('hex') + path.extname(cover_img_input_file);
+        fs.copyFile(cover_img_input_file, cover_img_output_file, (err) => { if (err) throw err });
+
+        this.temp_cover_filename = path.basename(cover_img_output_file);
       },
       switchFillMode() {
         this.fillMode = this.fillMode == "AUTO" ? "MANUAL" : "AUTO";
@@ -46,6 +101,7 @@ export default {
         });
 
         this.genres = [];
+        this.temp_cover_filename = "";
       },
       removeTag(genre) {
         let index  = this.genres.indexOf(genre);
@@ -68,7 +124,7 @@ export default {
       }
     },
     mounted() {
-      document.querySelector('#rating').addEventListener('click', function (e) {
+      document.querySelector('#rating').addEventListener('click', function(e) {
           let action = 'add';
           for (const span of this.children) {
               span.classList[action]('active');
@@ -78,6 +134,13 @@ export default {
 
       const bookGenresInput = document.getElementById("bookGenres");
       bookGenresInput.addEventListener("keyup", this.addTag);
+
+      const finishedCheckbox = document.getElementById("bookFinished");
+      finishedCheckbox.addEventListener('change', function(e) {
+        const bookEndDateInput = document.getElementById("bookEndDate");
+        bookEndDateInput.disabled = !e.target.checked;
+        bookEndDateInput.value = "";
+      });
     }
 }
 </script>
@@ -92,16 +155,19 @@ export default {
   
           <section class="modal-body" id="modalDescription">
             <div class="modal-body-left">
-              <div class="cover-loader"></div>
-              <button type="button" class="btn btn-primary cover-upload-btn auto-disabled" disabled>UPLOAD</button>
+              <div id="coverLoader" class="cover-loader" 
+                :style="this.temp_cover_filename != '' ? { 'background-image':  'url(' + require(`@/data/temp/${this.temp_cover_filename}`) } : { }"
+              ></div>
+              <input type="file" @change="uploadCover" ref="coverUpload" style="display: none" accept=".png,.jpg,.jpeg">
+              <button type="button" class="btn btn-primary cover-upload-btn auto-disabled" @click="clickUploadCoverInput()" disabled>UPLOAD</button>
 
               <div class="rating-title">RATING</div>
               <div id="rating">
-                <span class="active"></span>
-                <span class="active"></span>
-                <span class="active"></span>
-                <span class="active"></span>
-                <span class="active"></span>
+                <span class="rating-span active"></span>
+                <span class="rating-span active"></span>
+                <span class="rating-span active"></span>
+                <span class="rating-span active"></span>
+                <span class="rating-span active"></span>
               </div>
             </div>
             <div class="modal-body-right">
@@ -249,6 +315,7 @@ export default {
       margin-bottom: 5%;
       margin-left: auto;
       margin-right: auto;
+      background-size: contain;
     }
 
     .cover-upload-btn {

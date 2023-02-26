@@ -28,3 +28,5 @@ pnpm-debug.log*
 #Data files
 *.json
 !package.json
+data/covers/*
+!data/covers/.gitkeep

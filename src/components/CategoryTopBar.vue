@@ -36,14 +36,14 @@ export default {
             <fa-icon icon="plus" />
         </button>
 
-        <CategoryNewBookModal v-if="category == 'books'" v-show="isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'mangas'" v-show="isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'webtoons'" v-show="isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'comics'" v-show="isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'movies'" v-show="isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'series'" v-show="isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'animes'" v-show="isModalVisible" @close="closeModal" />
-        <CategoryNewBookModal v-if="category == 'games'" v-show="isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'books' && isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'mangas' && isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'webtoons' && isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'comics' && isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'movies' && isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'series' && isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'animes' && isModalVisible" @close="closeModal" />
+        <CategoryNewBookModal v-if="category == 'games' && isModalVisible" @close="closeModal" />
     </div>
 </template>
 

@@ -11,10 +11,10 @@ export default class Book {
     end_date;
     finished;
     synopsys;
-    stars;
+    rating;
     comment;
 
-    constructor(_title="", _author="", _release_date="", _page_count=0, _volume_id=0, _genres=[], _cover_url="", _start_date="", _end_date="", _finished=false, _synopsys="", _stars=5, _comment="") {
+    constructor(_title="", _author="", _release_date="", _page_count=0, _volume_id=0, _genres=[], _cover_url="", _start_date="", _end_date="", _finished=false, _synopsys="", _rating=5, _comment="") {
         this.title = _title;
         this.author = _author;
         this.release_date = _release_date;
@@ -26,7 +26,7 @@ export default class Book {
         this.end_date = _end_date;
         this.finished = _finished;
         this.synopsys = _synopsys;
-        this.stars = _stars;
+        this.rating = _rating;
         this.comment = _comment;
     }
 
@@ -74,8 +74,8 @@ export default class Book {
         return this.synopsys;
     }
 
-    getStars() {
-        return this.stars;
+    getRating() {
+        return this.rating;
     }
 
     getComment() {
