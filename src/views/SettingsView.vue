@@ -133,8 +133,7 @@ export default {
           {"name":"mangadex","value":""},
           {"name":"themoviedb","value":""},
           {"name":"myanimelist","value":""},
-          {"name":"igdb","value":""},
-          {"name":"lastfm","value":""}
+          {"name":"igdb","value":""}
         ]
       };
       fs.writeFileSync("src/data/settings.json", JSON.stringify(default_settings));
@@ -238,13 +237,6 @@ export default {
         <label for="igdbApiKey" class="col-sm-2 col-form-label">IGDB</label>
         <div class="col-sm-10">
           <input type="password" class="form-control" id="igdbApiKey" placeholder="IGDB_API_KEY" @change="enableSaveButton()">
-        </div>
-      </div>
-
-      <div class="form-group row">
-        <label for="lastfmApiKey" class="col-sm-2 col-form-label">LastFM</label>
-        <div class="col-sm-10">
-          <input type="password" class="form-control" id="lastfmApiKey" placeholder="LASTFM_API_KEY" @change="enableSaveButton()">
         </div>
       </div>
 
