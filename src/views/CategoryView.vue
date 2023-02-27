@@ -34,10 +34,10 @@ export default {
 
 <template>
   <div class="wrapper">
-    <CategorySidebar @reverse-sort-order-event="reverseSortingOrder" @card-size-update-event="updateCardSize"/>
+    <CategorySidebar @reverseSortOrderEvent="reverseSortingOrder" @cardSizeUpdateEvent="updateCardSize"/>
 
     <div id="content">
-      <CategoryTopBar :category="this.$route.params.type" @need-update="updateView"/>
+      <CategoryTopBar :category="this.$route.params.type" @needUpdateEvent="updateView"/>
       <CategoryScrollableContent :category="this.$route.params.type" :cardSize="itemCardSize" :sortingOrder="this.sortingOrder" :shouldReload="this.shouldReload"/>
     </div>
   </div>

@@ -3,6 +3,9 @@ import CategoryNewBookModal from './CategoryNewBookModal.vue';
 
 export default {
     name: "CategoryTopBar",
+    emits: {
+        needUpdateEvent: null
+    },
     components: {
         CategoryNewBookModal
     },
@@ -23,7 +26,7 @@ export default {
         },
         closeModal() {
             this.isModalVisible = false;
-            this.$emit('need-update');
+            this.$emit('needUpdateEvent');
         }
     }
 }
@@ -37,14 +40,14 @@ export default {
             <fa-icon icon="plus" />
         </button>
 
-        <CategoryNewBookModal v-if="category == 'books' && isModalVisible" @close-new-asset="closeModal" />
-        <CategoryNewBookModal v-if="category == 'mangas' && isModalVisible" @close-new-asset="closeModal" />
-        <CategoryNewBookModal v-if="category == 'webtoons' && isModalVisible" @close-new-asset="closeModal" />
-        <CategoryNewBookModal v-if="category == 'comics' && isModalVisible" @close-new-asset="closeModal" />
-        <CategoryNewBookModal v-if="category == 'movies' && isModalVisible" @close-new-asset="closeModal" />
-        <CategoryNewBookModal v-if="category == 'series' && isModalVisible" @close-new-asset="closeModal" />
-        <CategoryNewBookModal v-if="category == 'animes' && isModalVisible" @close-new-asset="closeModal" />
-        <CategoryNewBookModal v-if="category == 'games' && isModalVisible" @close-new-asset="closeModal" />
+        <CategoryNewBookModal v-if="category == 'books' && isModalVisible" @closeNewAssetEvent="closeModal" />
+        <CategoryNewBookModal v-if="category == 'mangas' && isModalVisible" @closeNewAssetEvent="closeModal" />
+        <CategoryNewBookModal v-if="category == 'webtoons' && isModalVisible" @closeNewAssetEvent="closeModal" />
+        <CategoryNewBookModal v-if="category == 'comics' && isModalVisible" @closeNewAssetEvent="closeModal" />
+        <CategoryNewBookModal v-if="category == 'movies' && isModalVisible" @closeNewAssetEvent="closeModal" />
+        <CategoryNewBookModal v-if="category == 'series' && isModalVisible" @closeNewAssetEvent="closeModal" />
+        <CategoryNewBookModal v-if="category == 'animes' && isModalVisible" @closeNewAssetEvent="closeModal" />
+        <CategoryNewBookModal v-if="category == 'games' && isModalVisible" @closeNewAssetEvent="closeModal" />
     </div>
 </template>
 
@@ -65,7 +68,7 @@ export default {
     margin-right: 30px;
 }
 
-#topbar svg {
+#topbar .new-asset-btn svg {
     margin-left: 10px;
 }
 </style>

@@ -1,3 +1,56 @@
+<script>
+export default {
+  name: "CategorySidebar",
+  emits: {
+    reverseSortOrderEvent: null,
+    cardSizeUpdateEvent: null,
+  },
+  methods: {
+    goToHome() {
+        this.$router.push({ name: 'Home' })
+    },
+    goToSettings() {
+        this.$router.push({ name: 'Settings' })
+    },
+    collapseSidebar() {
+        document.getElementById("sidebar").classList.toggle("closed")
+        document.getElementById("closed-sidebar-icon").classList.toggle("hidden")
+        document.getElementById("opened-sidebar-icon").classList.toggle("hidden")
+        Array.from(document.getElementsByClassName("sidebar-link-text")).forEach(element => {
+            element.classList.toggle("hidden")
+        });
+
+        if(document.getElementById("sidebar").classList.contains("closed")) {
+            Array.from(document.getElementsByClassName("sidebar-link-submenu")).forEach(element => {
+                element.classList.add("hidden")
+            })
+        }
+    },
+    makeActive(menu) {
+        Array.from(document.getElementsByClassName("sidebar-link")).forEach(element => {
+            if (element.classList.contains("active")) element.classList.remove("active")
+        })
+        document.getElementById(menu).classList.add("active")
+    },
+    collapseDropdown(submenu) {
+        if(document.getElementById("sidebar").classList.contains("closed")) this.collapseSidebar()
+        this.makeActive(submenu.replace("Submenu", "Menu"))
+        document.getElementById(submenu).classList.toggle("hidden")
+    },
+    reverseSortingOrder() {
+        this.$emit('reverseSortOrderEvent')
+        this.makeActive("sortingOrderMenu")
+        document.getElementById("decreasing-sorting-order-icon").classList.toggle("hidden")
+        document.getElementById("increasing-sorting-order-icon").classList.toggle("hidden")
+    },
+    updateCardSize(input) {
+        document.getElementById("range-counter").innerHTML = input;
+        this.$emit('cardSizeUpdateEvent');
+    }
+  }
+};
+</script>
+
 <template>
     <nav class="closed" id="sidebar">
         <div class="sidebar-header" @click="collapseSidebar()">
@@ -51,55 +104,6 @@
         </ul>
     </nav>
 </template>
-
-<script>
-export default {
-  name: "CategorySidebar",
-  methods: {
-    goToHome() {
-        this.$router.push({ name: 'Home' })
-    },
-    goToSettings() {
-        this.$router.push({ name: 'Settings' })
-    },
-    collapseSidebar() {
-        document.getElementById("sidebar").classList.toggle("closed")
-        document.getElementById("closed-sidebar-icon").classList.toggle("hidden")
-        document.getElementById("opened-sidebar-icon").classList.toggle("hidden")
-        Array.from(document.getElementsByClassName("sidebar-link-text")).forEach(element => {
-            element.classList.toggle("hidden")
-        });
-
-        if(document.getElementById("sidebar").classList.contains("closed")) {
-            Array.from(document.getElementsByClassName("sidebar-link-submenu")).forEach(element => {
-                element.classList.add("hidden")
-            })
-        }
-    },
-    makeActive(menu) {
-        Array.from(document.getElementsByClassName("sidebar-link")).forEach(element => {
-            if (element.classList.contains("active")) element.classList.remove("active")
-        })
-        document.getElementById(menu).classList.add("active")
-    },
-    collapseDropdown(submenu) {
-        if(document.getElementById("sidebar").classList.contains("closed")) this.collapseSidebar()
-        this.makeActive(submenu.replace("Submenu", "Menu"))
-        document.getElementById(submenu).classList.toggle("hidden")
-    },
-    reverseSortingOrder() {
-        this.$emit('reverse-sort-order-event')
-        this.makeActive("sortingOrderMenu")
-        document.getElementById("decreasing-sorting-order-icon").classList.toggle("hidden")
-        document.getElementById("increasing-sorting-order-icon").classList.toggle("hidden")
-    },
-    updateCardSize(input) {
-        document.getElementById("range-counter").innerHTML = input;
-        this.$emit('card-size-update-event');
-    }
-  }
-};
-</script>
 
 <style>
 #sidebar {

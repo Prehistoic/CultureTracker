@@ -32,3 +32,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - Doing the same thing with the other APIs
 - Creating the Asset details view (asset must be editable, edit button with appearing inputs)
 - Creating the Wishlist view
+- KPIs
