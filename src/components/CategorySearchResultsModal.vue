@@ -20,7 +20,7 @@ export default {
     <div class="modal-backdrop">
         <div class="search-results-modal">
             <header class="search-results-modal-header">
-                <slot name="header" >SEARCH RESULTS</slot>
+                <slot name="header">SEARCH RESULTS</slot>
             </header>
             <section class="search-results-modal-body">Search results</section>
             <footer class="search-results-modal-footer">

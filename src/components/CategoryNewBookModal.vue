@@ -147,7 +147,12 @@ export default {
       this.isVisibleSearchResultsModal = false;
     },
     searchOpenlibrary() {
-      this.openSearchResultsModal();
+      var bookTitleInput = document.getElementById("bookTitle");
+      if (bookTitleInput.value != "") {
+        this.openSearchResultsModal();
+      } else {
+        this.$toast.error("Title is empty !", { position: 'bottom', duration: 1500});
+      }
     }
   },
   mounted() {
