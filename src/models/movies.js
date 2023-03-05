@@ -1,14 +1,13 @@
-export default class Book {
+export default class Movie {
 
     title;
-    author;
+    director;
     release_date;
-    page_count;
+    duration;
     volume_id;
     genres;
     cover_url;
-    start_date;
-    end_date;
+    watch_date;
     finished;
     synopsys;
     rating;
@@ -16,16 +15,15 @@ export default class Book {
     is_macro_asset;
     sub_assets;
 
-    constructor(_title, _author, _release_date, _page_count, _volume_id, _genres, _cover_url, _start_date, _end_date, _finished, _synopsys, _rating, _comment, _is_macro_asset=false, _sub_assets=[]) {
+    constructor(_title, _director, _release_date, _duration, _volume_id, _genres, _cover_url, _watch_date, _finished, _synopsys, _rating, _comment, _is_macro_asset=false, _sub_assets=[]) {
         this.title = _title;
-        this.author = _author;
+        this.director = _director;
         this.release_date = _release_date;
-        this.page_count = _page_count;
+        this.duration = _duration;
         this.volume_id = _volume_id;
         this.genres = _genres;
         this.cover_url = _cover_url;
-        this.start_date = _start_date;
-        this.end_date = _end_date;
+        this.watch_date = _watch_date;
         this.finished = _finished;
         this.synopsys = _synopsys;
         this.rating = _rating;
@@ -35,6 +33,6 @@ export default class Book {
     }
 
     static MacroAssetInstance(_title, _genres, _cover_url, _synopsys, _rating, _comment) {
-        return new Book(_title, "", "", 0, 0, _genres, _cover_url, "", "", false, _synopsys, _rating, _comment, true);
+        return new Movie(_title, "", "", 0, 0, _genres, _cover_url, "", false, _synopsys, _rating, _comment, true);
     }
 }

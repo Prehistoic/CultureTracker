@@ -1,4 +1,4 @@
-export default class Book {
+export default class Comic {
 
     title;
     author;
@@ -35,6 +35,6 @@ export default class Book {
     }
 
     static MacroAssetInstance(_title, _genres, _cover_url, _synopsys, _rating, _comment) {
-        return new Book(_title, "", "", 0, 0, _genres, _cover_url, "", "", false, _synopsys, _rating, _comment, true);
+        return new Comic(_title, "", "", 0, 0, _genres, _cover_url, "", "", false, _synopsys, _rating, _comment, true);
     }
 }

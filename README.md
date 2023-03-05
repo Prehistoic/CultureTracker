@@ -27,7 +27,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### TO DO
 - Other ordering choices (author...)
-- Macro asset logic
+- Better text editor
 - Search book by Author ?
 - C/C the book implementation to other categories
 - Doing the same thing with the other APIs

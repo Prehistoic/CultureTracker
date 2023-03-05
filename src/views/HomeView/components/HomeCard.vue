@@ -18,9 +18,8 @@ export default {
 <template>
   <div class="card mb-4 shadow-lg border border-secondary bg-dark text-light" @click="goToCategory(category)">
       <img
-          class="card-img-top category-img"
-          :src="require('../assets/categories/' + category.toLowerCase() + '.jpg')"
-          alt="category image"
+          class="card-img-top"
+          :src="require('@/assets/categories/' + category.toLowerCase() + '.jpg')"
           draggable="false"
       />
       <div class="card-body">
@@ -30,8 +29,8 @@ export default {
 </template>
 
 <style>
-.category-img {
-  height: 200px;
+.card-img-top {
+  height: 200px !important;
   max-height: 200px;
 }
 </style>

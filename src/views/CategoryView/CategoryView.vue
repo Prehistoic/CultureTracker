@@ -1,7 +1,7 @@
 <script>
-import CategorySidebar from '@/components/CategorySidebar.vue';
-import CategoryTopBar from '@/components/CategoryTopBar.vue';
-import CategoryScrollableContent from '@/components/CategoryScrollableContent.vue';
+import CategorySidebar from './components/CategorySidebar.vue';
+import CategoryTopBar from './components/CategoryTopBar.vue';
+import CategoryScrollableContent from './components/CategoryScrollableContent.vue';
 
 export default {
   name: 'CategoryView',

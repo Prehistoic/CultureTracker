@@ -1,6 +1,6 @@
 <script>
-import HomeCard from '../components/HomeCard.vue'
-import HomeWishlistButton from '../components/HomeWishlistButton.vue'
+import HomeCard from './components/HomeCard.vue'
+import HomeWishlistButton from './components/HomeWishlistButton.vue'
 
 export default {
   name: 'HomeView',

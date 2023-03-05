@@ -17,7 +17,7 @@ export default {
 
 <template>
     <button class="wishlist-link" @click="goToWishlist()">
-      <img class="wishlist-img" :src="require('../assets/idea.png')" />
+      <img class="wishlist-img" :src="require('@/assets/idea.png')" />
       <div class="wishlist-text" id="circle-text">WISHLIST</div>
     </button>
 </template>
