@@ -2,17 +2,42 @@
 export default {
     name: "CategorySearchResultsModal",
     emits: {
-        closeSearchResultsEvent: null
+        closeSearchResultsEvent: null,
+        chosenResultEvent: null
     },
     props: ['results'],
+    data() {
+        return {
+            chosen_index: 0,
+        }
+    },
     methods: {
         close() {
             this.$emit('closeSearchResultsEvent');
         },
-        chooseResult() {
-            console.log(JSON.parse(JSON.stringify(this.results)));
+        chooseResult(clicked_index) {
+            this.chosen_index = clicked_index;
+            Array.from(document.getElementsByClassName("search-results-element")).forEach( (element, index) => {
+                index == this.chosen_index ? element.classList.add("chosen") : element.classList.remove("chosen");
+            });
+
+            const chooseButton = document.getElementById("chooseButton");
+            chooseButton.disabled = false;
+        },
+        confirmChosenResult() {
+            this.$emit('chosenResultEvent', this.chosen_index);
+            this.close();
+        },
+        getCoverUrl(url) {
+            return url != "Unknown" ? url : require("@/assets/unknown_image.jpg");
+        },
+        getParsedResults() {
+            return JSON.parse(JSON.stringify(this.results))
         }
     },
+    mounted() {
+        console.log(this.getParsedResults());
+    }
 }
 </script>
 
@@ -22,11 +47,20 @@ export default {
             <header class="search-results-modal-header">
                 <slot name="header">SEARCH RESULTS</slot>
             </header>
-            <section class="search-results-modal-body">Search results</section>
+            <section class="search-results-modal-body">
+                <div v-if="getParsedResults().length == 0" class="search-results-empty">No results found !</div>
+                <div v-if="getParsedResults().length > 0" class="search-results-list">
+                    <div class="search-results-element" v-for="(result, index) in getParsedResults()" :key="index" @click="chooseResult(index)">
+                        <img class="search-results-img" :src="this.getCoverUrl(result.cover_url)">
+                        <div class="search-results-title">{{ result.title }}</div>
+                        <div class="search-results-author">{{ result.author }}</div>
+                    </div>
+                </div>
+            </section>
             <footer class="search-results-modal-footer">
             <div class="search-results-action-buttons">
-                <button type="button" class="btn btn-secondary cancel-button" @click="close()">CANCEL</button>
-                <button type="button" class="btn btn-success choose-button" @click="chooseResult()">CONFIRM</button>
+                <button type="button" id="cancelButton" class="btn btn-secondary cancel-button" @click="close()">CANCEL</button>
+                <button type="button" id="chooseButton" class="btn btn-success choose-button" disabled @click="confirmChosenResult()">CONFIRM</button>
             </div>
             </footer>
         </div>
@@ -54,6 +88,7 @@ export default {
     min-width: 50%;
     margin-top: 1%;
     margin-left: 5%;
+    margin-right: 5%;
     z-index: 1;
 }
 
@@ -87,5 +122,50 @@ export default {
 
 .choose-button {
     margin-left: 20px;
+}
+
+.search-results-list {
+    overflow-y: scroll;
+    max-height: 700px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.search-results-element {
+    display: flex;
+    align-items: center;
+    border: solid 2px black;
+    margin-bottom: 10px;
+    background-color: lightgrey;
+}
+
+.search-results-element:hover {
+    background-color: grey;
+}
+
+.search-results-element.chosen {
+    background-color: lightgreen;
+}
+
+.search-results-img {
+    width: 10%;
+}
+
+.search-results-title {
+    width: 60%;
+    font-size: 150%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.search-results-author {
+    width: 30%;
+    font-size: 150%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 </style>

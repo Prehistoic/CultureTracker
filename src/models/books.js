@@ -14,7 +14,7 @@ export default class Book {
     rating;
     comment;
 
-    constructor(_title="", _author="", _release_date="", _page_count=0, _volume_id=0, _genres=[], _cover_url="", _start_date="", _end_date="", _finished=false, _synopsys="", _rating=5, _comment="") {
+    constructor(_title="", _author="", _release_date=0, _page_count=0, _volume_id=0, _genres=[], _cover_url="", _start_date="", _end_date="", _finished=false, _synopsys="", _rating=5, _comment="") {
         this.title = _title;
         this.author = _author;
         this.release_date = _release_date;

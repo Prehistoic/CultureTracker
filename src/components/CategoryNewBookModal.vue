@@ -1,5 +1,6 @@
 <script>
 import Book from "@/models/books"
+import Openlibrary from "@/sources/openlibrary";
 import CategorySearchResultsModal from "./CategorySearchResultsModal.vue";
 
 export default {
@@ -12,11 +13,11 @@ export default {
   },
   data() {
     return {
-      fillMode: "AUTO",
       genres: [],
       temp_cover_filename: "",
-      isVisibleSearchResultsModal: false,
-      searchResults: {}
+      currently_searching: false,
+      is_visible_search_results_modal: false,
+      search_results: {}
     }
   },
   methods: {
@@ -47,29 +48,29 @@ export default {
 
       const title = document.getElementById("bookTitle").value;
       const author = document.getElementById("bookAuthor").value;
-      const releaseDate = document.getElementById("bookReleaseDate").value;
+      const release_date = document.getElementById("bookReleaseDate").value;
       const volumeId = document.getElementById("bookVolumeId").value;
       const pageCount = document.getElementById("bookPageCount").value;
       const genres = this.genres.target;
       const cover_url = this.temp_cover_filename;
-      const startDate = document.getElementById("bookStartDate").value;
-      const endDate = document.getElementById("bookEndDate").value;
+      const start_date= document.getElementById("bookStartDate").value;
+      const end_date = document.getElementById("bookEndDate").value;
       const finished = document.getElementById("bookFinished").checked;
       const synopsys = document.getElementById("bookSynopsys").value;
       const comment = document.getElementById("bookComment").value;
       const rating = this.getRating();
 
-      if (title == "" | author == "" | releaseDate == "" | startDate == "" | synopsys == "" | comment == "" | cover_url == "" | (finished && endDate == "")) {
+      if (title == "" | author == "" | release_date == "" | start_date== "" | synopsys == "" | comment == "" | cover_url == "" | (finished && end_date == "")) {
         this.$toast.error("Missing elements !", { position: 'bottom', duration: 1500});
-      } else if (new Date(startDate) > new Date(endDate) | new Date(releaseDate) > new Date(startDate)) {
+      } else if (new Date(start_date) > new Date(end_date) | new Date(release_date) > new Date(start_date)) {
         this.$toast.error("Problem in dates !", { position: 'bottom', duration: 1500});
       } else {
-        let newBook = new Book(title, author, releaseDate, pageCount, volumeId, genres, cover_url, startDate, endDate, finished, synopsys, rating, comment);
+        let new_book = new Book(title, author, release_date, pageCount, volumeId, genres, cover_url, start_date, end_date, finished, synopsys, rating, comment);
         
-        let newBookData = JSON.parse(JSON.stringify(newBook));
-        let booksData = JSON.parse(fs.readFileSync("src/data/books.json"))
-        booksData["assets"].push(newBookData);
-        fs.writeFileSync("src/data/books.json", JSON.stringify(booksData));
+        let new_book_data = JSON.parse(JSON.stringify(new_book));
+        let books_data = JSON.parse(fs.readFileSync("src/data/books.json"))
+        books_data["assets"].push(new_book_data);
+        fs.writeFileSync("src/data/books.json", JSON.stringify(books_data));
 
         this.saveCover();
 
@@ -89,37 +90,6 @@ export default {
       fs.copyFile(cover_img_input_file, cover_img_output_file, (err) => { if (err) throw err });
 
       this.temp_cover_filename = path.basename(cover_img_output_file);
-    },
-    switchFillMode() {
-      this.fillMode = this.fillMode == "AUTO" ? "MANUAL" : "AUTO";
-      this.cleanAndToggleDisabledInputs();
-    },
-    cleanAndToggleDisabledInputs() {
-      const inputs = document.getElementsByTagName("input");
-      Array.from(inputs).forEach(input => {
-        if (input.classList.contains("auto-disabled")) {
-          input.disabled = !input.disabled;
-          if (input.type == "text") {
-            input.value = "";
-          }
-          else if (input.type == "date") {
-            input.value = "";
-          }
-          else if (input.type == "number") {
-            input.value = "1";
-          }
-        }
-      });
-
-      const buttons = document.getElementsByTagName("button");
-      Array.from(buttons).forEach(button => {
-        if (button.classList.contains("auto-disabled")) {
-          button.disabled = !button.disabled;
-        }
-      });
-
-      this.genres = [];
-      this.temp_cover_filename = "";
     },
     removeTag(genre) {
       let index  = this.genres.indexOf(genre);
@@ -141,18 +111,73 @@ export default {
       }
     },
     openSearchResultsModal() {
-      this.isVisibleSearchResultsModal = true;
+      this.is_visible_search_results_modal = true;
     },
     closeSearchResultsModal() {
-      this.isVisibleSearchResultsModal = false;
+      this.is_visible_search_results_modal = false;
     },
     searchOpenlibrary() {
-      var bookTitleInput = document.getElementById("bookTitle");
-      if (bookTitleInput.value != "") {
-        this.openSearchResultsModal();
+      const openlibraryAPI = new Openlibrary();
+
+      var bookTitleInput = document.getElementById("bookTitle").value;
+      if (bookTitleInput != "") {
+        if (bookTitleInput.length >= 3) {
+          this.currently_searching = true;
+          openlibraryAPI.searchByTitle(bookTitleInput)
+            .then( (results) => {
+              this.search_results = results;
+              this.openSearchResultsModal();
+              this.currently_searching = false;
+            });
+        } else {
+          this.$toast.error("Title is too short (3 characters min) !", { position: 'bottom', duration: 1500});
+        }
       } else {
         this.$toast.error("Title is empty !", { position: 'bottom', duration: 1500});
       }
+    },
+    updateViewChosenResult(chosen_result_index) {
+      const path = window.require('path');
+      const crypto = window.require("crypto");
+
+      const bookTitle = document.getElementById("bookTitle");
+      bookTitle.value = this.search_results[chosen_result_index]["title"];
+
+      const bookAuthor = document.getElementById("bookAuthor");
+      const searchResultAuthor = this.search_results[chosen_result_index]["author"];
+      if (searchResultAuthor != "Unknown") bookAuthor.value = searchResultAuthor;
+
+      const bookPageCount = document.getElementById("bookPageCount");
+      const searchResultPageCount = this.search_results[chosen_result_index]["page_count"];
+      if (searchResultPageCount != "Unknown") bookPageCount.value = searchResultPageCount;
+
+      const bookReleaseDate = document.getElementById("bookReleaseDate");
+      const searchResultReleaseDate = this.search_results[chosen_result_index]["release_date"];
+      if (searchResultReleaseDate != "Unknown") bookReleaseDate.value = searchResultReleaseDate;
+
+      const target_path = "src/data/temp/" + crypto.randomBytes(20).toString('hex') + ".jpg"
+      const searchResultCover = this.search_results[chosen_result_index]["cover_url"];
+      if (searchResultCover != "Unknown") {
+        this.downloadRemoteImage(searchResultCover, target_path).then(() => {
+          this.temp_cover_filename = path.basename(target_path);
+        }); 
+      }
+    },
+    downloadRemoteImage(file_url, target_path) {
+      const fs = window.require("fs");
+      const request = window.require("request");
+
+      const out = fs.createWriteStream(target_path);
+      return new Promise((resolve, reject) => {
+        request.get(file_url, null)
+          .on('response', (res) => {
+            res.pipe(out);
+            resolve();
+          })
+          .on('error', (err) => {
+            reject(err);
+          });
+      });
     }
   },
   mounted() {
@@ -179,7 +204,7 @@ export default {
 
 <template>
   <transition name="modal-fade">
-    <div class="new-asset-modal-backdrop" :style="[this.isVisibleSearchResultsModal ? {'pointer-events': 'none'} : {}]">
+    <div class="new-asset-modal-backdrop" :style="[this.is_visible_search_results_modal ? {'pointer-events': 'none'} : {}]">
       <div class="new-asset-modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
           <header class="new-asset-modal-header" id="modalTitle">
             <slot name="header" >NEW BOOK</slot>
@@ -191,7 +216,7 @@ export default {
               :style="this.temp_cover_filename != '' ? { 'background-image':  'url(' + require(`@/data/temp/${this.temp_cover_filename}`) } : { }"
             ></div>
             <input type="file" @change="uploadCover" ref="coverUpload" style="display: none" accept=".png,.jpg,.jpeg">
-            <button type="button" class="btn btn-primary cover-upload-btn auto-disabled" @click="clickUploadCoverInput()" disabled>UPLOAD</button>
+            <button type="button" class="btn btn-primary cover-upload-btn" @click="clickUploadCoverInput()">UPLOAD</button>
 
             <div class="rating-title">RATING</div>
             <div id="rating">
@@ -208,20 +233,23 @@ export default {
                 <label for="bookTitle">Title</label>
                 <input type="text" spellcheck="false" class="form-control" id="bookTitle" placeholder="Enter a title...">
               </div>
-              <button type="button" class="btn btn-primary search-btn" :style="[this.fillMode == 'MANUAL' ? {'display': 'none'} : {}]" @click="this.searchOpenlibrary()">
-                <fa-icon icon="magnifying-glass" />
+              <button type="button" class="btn btn-primary search-btn" @click="this.searchOpenlibrary()">
+                <fa-icon v-if="!this.currently_searching" icon="magnifying-glass" />
+                <div v-if="this.currently_searching" class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
               </button>
             </div>
 
             <div class="form-group">
               <label for="bookAuthor">Author</label>
-              <input type="text" spellcheck="false" class="form-control auto-disabled" id="bookAuthor" placeholder="Enter an author..." disabled>
+              <input type="text" spellcheck="false" class="form-control" id="bookAuthor" placeholder="Enter an author...">
             </div>
 
             <div class="row">
               <div class="col-4 form-group">
                 <label for="bookReleaseDate">Release date</label>
-                <input type="date" class="form-control auto-disabled" id="bookReleaseDate" disabled>
+                <input type="number" class="form-control" id="bookReleaseDate" min="1000" max="2100" placeholder="Enter a year...">
               </div>
 
               <div class="col-4 form-group">
@@ -231,7 +259,7 @@ export default {
 
               <div class="col-4 form-group">
                 <label for="bookPageCount">Page count</label>
-                <input type="number" class="form-control auto-disabled" id="bookPageCount" value="1" disabled>
+                <input type="number" class="form-control" id="bookPageCount" min="0" max="10000" placeholder="Enter a page count...">
               </div>
             </div>
 
@@ -276,10 +304,6 @@ export default {
         </section>
 
         <footer class="new-asset-modal-footer">
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitch" @click="switchFillMode()" checked>
-            <label class="form-check-label" for="flexSwitch">{{ this.fillMode }}</label>
-          </div>
           <div class="action-buttons">
             <button type="button" class="btn btn-secondary cancel-button" @click="close()">CANCEL</button>
             <button type="button" class="btn btn-success create-button" @click="saveBook()">CREATE</button>
@@ -289,7 +313,7 @@ export default {
     </div>
   </transition>
   
-  <CategorySearchResultsModal v-if="this.isVisibleSearchResultsModal" @closeSearchResultsEvent="this.closeSearchResultsModal()" :results="this.searchResults"/>
+  <CategorySearchResultsModal v-if="this.is_visible_search_results_modal" @closeSearchResultsEvent="this.closeSearchResultsModal()" @chosenResultEvent="this.updateViewChosenResult" :results="this.search_results"/>
 </template>
 
 <style>
@@ -333,7 +357,7 @@ export default {
 
   .new-asset-modal-footer {
     border-top: 1px solid #eeeeee;
-    justify-content: space-between;
+    justify-content: flex-end;
     font-weight: bold;
   }
 
@@ -473,6 +497,10 @@ export default {
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
+  }
+
+  .action-buttons {
+    justify-self: end;
   }
 
   .create-button {
